@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: rabbitmq-diagnostics -q status
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  consumer1:
+    build:
+      context: .
+      dockerfile: docker/consumer.Dockerfile
+    image: chaitanyawho/rmq-tutorial/consumer:1.1.0
+    container_name: consumer1
+    environment:
+      SPRING_PROFILES_ACTIVE: consumer
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  consumer2:
+    build:
+      context: .
+      dockerfile: docker/consumer.Dockerfile
+    image: chaitanyawho/rmq-tutorial/consumer:1.1.0
+    container_name: consumer2
+    environment:
+      SPRING_PROFILES_ACTIVE: consumer
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  consumer3:
+    build:
+      context: .
+      dockerfile: docker/consumer.Dockerfile
+    image: chaitanyawho/rmq-tutorial/consumer:1.1.0
+    container_name: consumer3
+    environment:
+      SPRING_PROFILES_ACTIVE: consumer
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  producer1:
+    build:
+      context: .
+      dockerfile: docker/producer.Dockerfile
+    image: chaitanyawho/rmq/producer:1.1.0
+    container_name: producer1
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_PROFILES_ACTIVE: producer
+      SUBMISSION_COUNT: 50
+      SUBMISSION_INTERVAL: 200
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  producer2:
+    build:
+      context: .
+      dockerfile: docker/producer.Dockerfile
+    image: chaitanyawho/rmq-tutorial/producer:1.1.0
+    container_name: producer2
+    environment:
+      SPRING_PROFILES_ACTIVE: producer
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SUBMISSION_COUNT: 5
+      SUBMISSION_INTERVAL: 1000
+    depends_on:
+      rabbitmq:
+        condition: service_healthy

@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: mqg-ns
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: producer1
+  name: producer1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      io.kompose.service: producer1
+  strategy: { }
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: producer1
+    spec:
+      containers:
+        - env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: producer
+            - name: SPRING_RABBITMQ_HOST
+              value: rabbitmq
+            - name: SUBMISSION_COUNT
+              value: "150"
+            - name: SUBMISSION_INTERVAL
+              value: "200"
+            - name: SPRING_RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: username
+            - name: SPRING_RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: rabbitmq-default-user
+          image: chaitanyawho/rmq-tutorial/producer:1.1.0
+          name: producer1
+          resources: { }
+      restartPolicy: Never
+status: { }
