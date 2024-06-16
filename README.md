@@ -1,5 +1,7 @@
 # RabbitMQ + K8s Monitoring Stack 
 
+> Consider going through the [Wiki](https://github.com/chaitanyawho/rabbitmq-guide/wiki) for a more detailed tutorial on setting up all the components in this stack.
+
 This repository contains the boilerplate code for setting up RabbitMQ with multiple producers and consumers, deployment on Kubernetes, and monitoring using Prometheus and Grafana.
 
 1. Producer
